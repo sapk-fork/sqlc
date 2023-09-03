@@ -79,13 +79,13 @@ SELECT u.id, u.name, u.age FROM users u
 `
 
 type WithAliasRow struct {
-	User User
+	U User
 }
 
 func (q *Queries) WithAlias(ctx context.Context) (WithAliasRow, error) {
 	row := q.db.QueryRowContext(ctx, withAlias)
 	var i WithAliasRow
-	err := row.Scan(&i.User.ID, &i.User.Name, &i.User.Age)
+	err := row.Scan(&i.U.ID, &i.U.Name, &i.U.Age)
 	return i, err
 }
 
@@ -120,8 +120,8 @@ INNER JOIN baz.users bu ON users.id = bu.id
 `
 
 type WithCrossSchemaRow struct {
-	User    User
-	BazUser BazUser
+	User User
+	Bu   BazUser
 }
 
 func (q *Queries) WithCrossSchema(ctx context.Context) ([]WithCrossSchemaRow, error) {
@@ -137,8 +137,8 @@ func (q *Queries) WithCrossSchema(ctx context.Context) ([]WithCrossSchemaRow, er
 			&i.User.ID,
 			&i.User.Name,
 			&i.User.Age,
-			&i.BazUser.ID,
-			&i.BazUser.Name,
+			&i.Bu.ID,
+			&i.Bu.Name,
 		); err != nil {
 			return nil, err
 		}
@@ -158,13 +158,13 @@ SELECT bu.id, bu.name FROM baz.users bu
 `
 
 type WithSchemaRow struct {
-	BazUser BazUser
+	Bu BazUser
 }
 
 func (q *Queries) WithSchema(ctx context.Context) (WithSchemaRow, error) {
 	row := q.db.QueryRowContext(ctx, withSchema)
 	var i WithSchemaRow
-	err := row.Scan(&i.BazUser.ID, &i.BazUser.Name)
+	err := row.Scan(&i.Bu.ID, &i.Bu.Name)
 	return i, err
 }
 
