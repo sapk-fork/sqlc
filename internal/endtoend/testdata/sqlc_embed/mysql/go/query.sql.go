@@ -59,16 +59,16 @@ func (q *Queries) Join(ctx context.Context) (JoinRow, error) {
 const listUserLink = `-- name: ListUserLink :many
 SELECT
     owner.id, owner.name, owner.age,
-    consumer.id, consumer.name, consumer.age
+    consumers.id, consumers.name, consumers.age
 FROM
     user_links
     INNER JOIN users AS owner ON owner.id = user_links.owner_id
-    INNER JOIN users AS consumer ON consumer.id = user_links.consumer_id
+    INNER JOIN users AS consumers ON consumers.id = user_links.consumer_id
 `
 
 type ListUserLinkRow struct {
-	Owner    User
-	Consumer User
+	Owner     User
+	Consumers User
 }
 
 func (q *Queries) ListUserLink(ctx context.Context) ([]ListUserLinkRow, error) {
@@ -84,9 +84,9 @@ func (q *Queries) ListUserLink(ctx context.Context) ([]ListUserLinkRow, error) {
 			&i.Owner.ID,
 			&i.Owner.Name,
 			&i.Owner.Age,
-			&i.Consumer.ID,
-			&i.Consumer.Name,
-			&i.Consumer.Age,
+			&i.Consumers.ID,
+			&i.Consumers.Name,
+			&i.Consumers.Age,
 		); err != nil {
 			return nil, err
 		}
