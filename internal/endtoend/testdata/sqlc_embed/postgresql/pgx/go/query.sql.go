@@ -56,6 +56,48 @@ func (q *Queries) Join(ctx context.Context) (JoinRow, error) {
 	return i, err
 }
 
+const listUserLink = `-- name: ListUserLink :many
+SELECT
+    owner.id, owner.name, owner.age,
+    consumer.id, consumer.name, consumer.age
+FROM
+    user_links
+    INNER JOIN users AS owner ON owner.id = user_links.owner_id
+    INNER JOIN users AS consumer ON consumer.id = user_links.consumer_id
+`
+
+type ListUserLinkRow struct {
+	Owner    User `db:"owner" json:"owner"`
+	Consumer User `db:"consumer" json:"consumer"`
+}
+
+func (q *Queries) ListUserLink(ctx context.Context) ([]ListUserLinkRow, error) {
+	rows, err := q.db.Query(ctx, listUserLink)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListUserLinkRow
+	for rows.Next() {
+		var i ListUserLinkRow
+		if err := rows.Scan(
+			&i.Owner.ID,
+			&i.Owner.Name,
+			&i.Owner.Age,
+			&i.Consumer.ID,
+			&i.Consumer.Name,
+			&i.Consumer.Age,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const only = `-- name: Only :one
 SELECT users.id, users.name, users.age FROM users
 `
