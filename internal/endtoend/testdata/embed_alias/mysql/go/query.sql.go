@@ -20,8 +20,8 @@ FROM
 `
 
 type ListUserRelationRow struct {
-	User   User
-	User_2 User
+	Owner    User
+	Consumer User
 }
 
 func (q *Queries) ListUserRelation(ctx context.Context) ([]ListUserRelationRow, error) {
@@ -34,10 +34,10 @@ func (q *Queries) ListUserRelation(ctx context.Context) ([]ListUserRelationRow, 
 	for rows.Next() {
 		var i ListUserRelationRow
 		if err := rows.Scan(
-			&i.User.ID,
-			&i.User.Name,
-			&i.User_2.ID,
-			&i.User_2.Name,
+			&i.Owner.ID,
+			&i.Owner.Name,
+			&i.Consumer.ID,
+			&i.Consumer.Name,
 		); err != nil {
 			return nil, err
 		}
