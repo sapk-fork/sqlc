@@ -2,6 +2,7 @@ package rewrite
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/sqlc-dev/sqlc/internal/sql/ast"
 	"github.com/sqlc-dev/sqlc/internal/sql/astutils"
@@ -12,6 +13,11 @@ type Embed struct {
 	Table *ast.TableName
 	param string
 	Node  *ast.ColumnRef
+}
+
+// Name name or scope of the embed
+func (e Embed) Name() string {
+	return e.param
 }
 
 // Orig string to replace
@@ -65,6 +71,8 @@ func Embeds(raw *ast.RawStmt) (*ast.RawStmt, EmbedSet) {
 				param: param,
 				Node:  node,
 			})
+
+			log.Printf("embed: %#v\n%#v\n%#v", embeds[len(embeds)-1], embeds[len(embeds)-1].Table, embeds[len(embeds)-1].Node.Fields.Items[0])
 
 			cr.Replace(node)
 			return false

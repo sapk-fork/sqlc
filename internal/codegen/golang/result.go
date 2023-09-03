@@ -2,6 +2,7 @@ package golang
 
 import (
 	"fmt"
+	"log"
 	"sort"
 	"strings"
 
@@ -98,6 +99,8 @@ func buildStructs(req *plugin.CodeGenRequest) []Struct {
 					Tags:    tags,
 					Comment: column.Comment,
 				})
+
+				log.Printf("Fields: %#v\n%#v\n%#v", s.Fields[len(s.Fields)-1], s.Fields[len(s.Fields)-1].Name, s.Fields[len(s.Fields)-1].Type)
 			}
 			structs = append(structs, s)
 		}
@@ -307,6 +310,8 @@ func buildQueries(req *plugin.CodeGenRequest, structs []Struct) ([]Query, error)
 			}
 		}
 
+		log.Printf("gq: %#v\n%#v\n%#v", gq, gq.Arg.Struct, gq.Ret.Struct)
+
 		qs = append(qs, gq)
 	}
 	sort.Slice(qs, func(i, j int) bool { return qs[i].MethodName < qs[j].MethodName })
@@ -342,13 +347,13 @@ func columnsToStruct(req *plugin.CodeGenRequest, name string, columns []goColumn
 	for i, c := range columns {
 		colName := columnName(c.Column, i)
 		tagName := colName
-
-		// override col/tag with expected model name
-		if c.embed != nil {
-			colName = c.embed.modelName
-			tagName = SetCaseStyle(colName, "snake")
-		}
-
+		/*
+			// override col/tag with expected model name
+			if c.embed != nil {
+				colName = c.embed.modelName
+				tagName = SetCaseStyle(colName, "snake")
+			}
+		*/
 		fieldName := StructName(colName, req.Settings)
 		baseFieldName := fieldName
 		// Track suffixes by the ID of the column, so that columns referring to the same numbered parameter can be
