@@ -138,6 +138,9 @@ func newGoEmbed(req *plugin.CodeGenRequest, tableName string, embed *plugin.Iden
 			continue
 		}
 
+		fields := make([]Field, len(s.Fields))
+		copy(fields, s.Fields)
+
 		structName := tableName
 		if !req.Settings.Go.EmitExactTableNames {
 			structName = inflection.Singular(inflection.SingularParams{
@@ -145,9 +148,6 @@ func newGoEmbed(req *plugin.CodeGenRequest, tableName string, embed *plugin.Iden
 				Exclusions: req.Settings.Go.InflectionExcludeTableNames,
 			})
 		}
-
-		fields := make([]Field, len(s.Fields))
-		copy(fields, s.Fields)
 
 		return &goEmbed{
 			modelType: s.Name,
