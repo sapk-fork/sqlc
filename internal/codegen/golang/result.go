@@ -138,16 +138,12 @@ func newGoEmbed(req *plugin.CodeGenRequest, tableName string, embed *plugin.Iden
 			continue
 		}
 
-		structName := s.Name
-
-		if tableName != s.Table.Name {
-			structName = tableName
-			if !req.Settings.Go.EmitExactTableNames {
-				structName = inflection.Singular(inflection.SingularParams{
-					Name:       structName,
-					Exclusions: req.Settings.Go.InflectionExcludeTableNames,
-				})
-			}
+		structName := tableName
+		if !req.Settings.Go.EmitExactTableNames {
+			structName = inflection.Singular(inflection.SingularParams{
+				Name:       structName,
+				Exclusions: req.Settings.Go.InflectionExcludeTableNames,
+			})
 		}
 
 		fields := make([]Field, len(s.Fields))
