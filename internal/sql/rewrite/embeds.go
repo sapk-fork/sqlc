@@ -2,7 +2,6 @@ package rewrite
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/sqlc-dev/sqlc/internal/sql/ast"
 	"github.com/sqlc-dev/sqlc/internal/sql/astutils"
@@ -71,8 +70,6 @@ func Embeds(raw *ast.RawStmt) (*ast.RawStmt, EmbedSet) {
 				param: param,
 				Node:  node,
 			})
-
-			log.Printf("embed: %#v\n%#v\n%#v", embeds[len(embeds)-1], embeds[len(embeds)-1].Table, embeds[len(embeds)-1].Node.Fields.Items[0])
 
 			cr.Replace(node)
 			return false

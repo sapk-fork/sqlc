@@ -1,7 +1,6 @@
 package golang
 
 import (
-	"log"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -17,8 +16,6 @@ type Struct struct {
 }
 
 func StructName(name string, settings *plugin.Settings) string {
-	log.Printf("StructName: %#v\n%#v", name, settings)
-
 	if rename := settings.Rename[name]; rename != "" {
 		return rename
 	}
