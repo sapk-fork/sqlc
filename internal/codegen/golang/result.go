@@ -122,7 +122,7 @@ type goEmbed struct {
 
 // look through all the structs and attempt to find a matching one to embed
 // We need the name of the struct and its field names.
-func newGoEmbed(embed *plugin.Identifier, structs []Struct, defaultSchema string) *goEmbed {
+func newGoEmbed(req *plugin.CodeGenRequest, tableName string, embed *plugin.Identifier, structs []Struct, defaultSchema string) *goEmbed {
 	if embed == nil {
 		return nil
 	}
@@ -138,6 +138,14 @@ func newGoEmbed(embed *plugin.Identifier, structs []Struct, defaultSchema string
 			continue
 		}
 
+		structName := tableName
+		if !req.Settings.Go.EmitExactTableNames {
+			structName = inflection.Singular(inflection.SingularParams{
+				Name:       structName,
+				Exclusions: req.Settings.Go.InflectionExcludeTableNames,
+			})
+		}
+
 		fields := make([]Field, len(s.Fields))
 		for i, f := range s.Fields {
 			fields[i] = f
@@ -145,7 +153,7 @@ func newGoEmbed(embed *plugin.Identifier, structs []Struct, defaultSchema string
 
 		return &goEmbed{
 			modelType: s.Name,
-			modelName: s.Name,
+			modelName: structName,
 			fields:    fields,
 		}
 	}
@@ -288,7 +296,7 @@ func buildQueries(req *plugin.CodeGenRequest, structs []Struct) ([]Query, error)
 					columns = append(columns, goColumn{
 						id:     i,
 						Column: c,
-						embed:  newGoEmbed(c.EmbedTable, structs, req.Catalog.DefaultSchema),
+						embed:  newGoEmbed(req, c.Name, c.EmbedTable, structs, req.Catalog.DefaultSchema),
 					})
 				}
 				var err error
@@ -342,6 +350,13 @@ func columnsToStruct(req *plugin.CodeGenRequest, name string, columns []goColumn
 	for i, c := range columns {
 		colName := columnName(c.Column, i)
 		tagName := colName
+
+		// override col/tag with expected model name
+		if c.embed != nil {
+			colName = c.embed.modelName
+			tagName = SetCaseStyle(colName, "snake")
+		}
+
 		fieldName := StructName(colName, req.Settings)
 		baseFieldName := fieldName
 		// Track suffixes by the ID of the column, so that columns referring to the same numbered parameter can be
