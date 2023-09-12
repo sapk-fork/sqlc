@@ -16,10 +16,16 @@ type BazUser struct {
 type Post struct {
 	ID     int32
 	UserID int32
+	Likes  []int32
 }
 
 type User struct {
 	ID   int32
 	Name string
 	Age  sql.NullInt32
+}
+
+type UserLink struct {
+	OwnerID    int32
+	ConsumerID int32
 }

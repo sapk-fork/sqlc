@@ -9,17 +9,22 @@ import (
 )
 
 type BazUser struct {
-	ID   int32
+	ID   int64
 	Name string
 }
 
 type Post struct {
-	ID     int32
-	UserID int32
+	ID     int64
+	UserID int64
 }
 
 type User struct {
-	ID   int32
+	ID   int64
 	Name string
-	Age  sql.NullInt32
+	Age  sql.NullInt64
+}
+
+type UserLink struct {
+	OwnerID    int64
+	ConsumerID int64
 }

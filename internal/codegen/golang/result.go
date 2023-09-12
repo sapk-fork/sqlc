@@ -122,13 +122,13 @@ type goEmbed struct {
 
 // look through all the structs and attempt to find a matching one to embed
 // We need the name of the struct and its field names.
-func newGoEmbed(columnName string, embed *plugin.Identifier, structs []Struct, defaultSchema string) *goEmbed {
+func newGoEmbed(req *plugin.CodeGenRequest, columnName string, embed *plugin.Identifier, structs []Struct) *goEmbed {
 	if embed == nil {
 		return nil
 	}
 
 	for _, s := range structs {
-		embedSchema := defaultSchema
+		embedSchema := req.Catalog.DefaultSchema
 		if embed.Schema != "" {
 			embedSchema = embed.Schema
 		}
@@ -142,7 +142,7 @@ func newGoEmbed(columnName string, embed *plugin.Identifier, structs []Struct, d
 		copy(fields, s.Fields)
 
 		structName := s.Name
-		if s.Table.Name != columnName {
+		if req.Settings.Go.EmitEmbedAlias && s.Table.Name != columnName {
 			structName = columnName
 		}
 
@@ -291,7 +291,7 @@ func buildQueries(req *plugin.CodeGenRequest, structs []Struct) ([]Query, error)
 					columns = append(columns, goColumn{
 						id:     i,
 						Column: c,
-						embed:  newGoEmbed(c.Name, c.EmbedTable, structs, req.Catalog.DefaultSchema),
+						embed:  newGoEmbed(req, c.Name, c.EmbedTable, structs),
 					})
 				}
 				var err error
