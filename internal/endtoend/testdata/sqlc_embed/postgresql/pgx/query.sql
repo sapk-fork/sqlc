@@ -16,12 +16,6 @@ CREATE TABLE baz.users (
     name varchar(255) NOT NULL
 );
 
-CREATE TABLE user_links (
-  owner_id integer NOT NULL,
-  consumer_id integer NOT NULL,
-  PRIMARY KEY (owner_id, consumer_id)
-);
-
 
 -- name: Only :one
 SELECT sqlc.embed(users) FROM users;
@@ -48,12 +42,3 @@ SELECT sqlc.embed(bu) FROM baz.users bu;
 -- name: WithCrossSchema :many
 SELECT sqlc.embed(users), sqlc.embed(bu) FROM users
 INNER JOIN baz.users bu ON users.id = bu.id;
-
--- name: ListUserLink :many
-SELECT
-    sqlc.embed(owner),
-    sqlc.embed(consumer)
-FROM
-    user_links
-    INNER JOIN users AS owner ON owner.id = user_links.owner_id
-    INNER JOIN users AS consumer ON consumer.id = user_links.consumer_id;

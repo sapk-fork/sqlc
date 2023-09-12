@@ -36,6 +36,7 @@ type tmplCtx struct {
 	EmitMethodsWithDBArgument bool
 	EmitEnumValidMethod       bool
 	EmitAllEnumValues         bool
+	EmitEmbedAlias            bool
 	UsesCopyFrom              bool
 	UsesBatch                 bool
 }
@@ -135,6 +136,7 @@ func generate(req *plugin.CodeGenRequest, enums []Enum, structs []Struct, querie
 		EmitMethodsWithDBArgument: golang.EmitMethodsWithDbArgument,
 		EmitEnumValidMethod:       golang.EmitEnumValidMethod,
 		EmitAllEnumValues:         golang.EmitAllEnumValues,
+		EmitEmbedAlias:            golang.EmitEmbedAlias,
 		UsesCopyFrom:              usesCopyFrom(queries),
 		UsesBatch:                 usesBatch(queries),
 		SQLDriver:                 parseDriver(golang.SqlPackage),
